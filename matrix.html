@@ -1,0 +1,143 @@
+<html>
+<title>Matrix Rain</title>
+
+<style>
+    body {
+        margin: 0px;
+        overflow: hidden;
+    }
+</style>
+
+<body onresize="resize()">
+    <canvas id="cnv"></canvas>
+    <script>
+        canvas = document.getElementById('cnv');
+        ctx = canvas.getContext('2d');
+
+        width = cnv.width = window.innerWidth;
+        height = cnv.height = window.innerHeight;
+
+        canvas.style.backgroundColor = "black";
+        streams = [];
+
+        start();
+        setInterval(update, 60);
+
+        textSize = 18;
+
+        speed = 10;
+        opacity = 0.7;
+
+        var frameCount;
+
+        function resize(){
+            width = cnv.width = window.innerWidth;
+            height = cnv.height = window.innerHeight;
+        }
+
+        function start() {
+            frameCount = 0;
+            for (var i = 0; i < width / 20; i++) {
+                str = Stream(
+                    i * 20, 
+                    (Math.random() * height) + 5, 
+                    Math.round(Math.random() * 30 + 10), 
+                    Math.random() * 2 + 10
+                    );
+
+                str.getSymbols();
+                streams.push(str);
+            }
+        }
+
+        function update() {
+            //ctx.fillStyle = "rgb(0, 255, 70)";
+
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.font = "16px Georgia";
+
+            for (var s = 0; s < streams.length; s++) {
+                streams[s].currY += streams[s].speed;
+                streams[s].drawSymbols();
+
+                if (streams[s].currY > height) {
+                    streams[s].currY = -600;
+                }
+
+                for (var i = 0; i < streams[s].streamLength; i++) {
+                    if (frameCount % streams[s].symbols[i].timer == 0) {
+                        streams[s].symbols[i].genNewSymbol();
+                    }
+                }
+            }
+            frameCount++;
+        }
+
+        function Symbol(myX, myY) {
+            var self = {
+                symbol: String.fromCharCode(
+                    0x30A0 + Math.round(Math.random() * 96)),
+                opacity: 1,
+                x: myX,
+                y: myY,
+                timer: Math.round((Math.random() * 20) + 20)
+            }
+            self.genNewSymbol = function () {
+                self.symbol = String.fromCharCode(0x30A0 + Math.round(Math.random() * 96));
+            }
+
+            self.setOpacity = function (o){
+                self.opacity = o;
+            }
+            return self;
+        }
+
+        function Stream(startX, startY, len, speed) {
+            var self = {
+                symbols: [],
+                streamLength: len,
+                speed: speed,
+                startX: startX,
+                startY: startY,
+                currX: startX,
+                currY: startY,
+                totalOpacity: 1
+            }
+
+            self.getSymbols = function () {
+                for (var s = 0; s < self.streamLength; s++) {
+                    symbol = Symbol(startX, s);
+                    symbol.opacity = self.totalOpacity;
+                    self.symbols.push(symbol);
+                    self.totalOpacity -= 1/self.streamLength;
+                }
+            }
+
+            self.drawSymbols = function () {
+                for (var i = self.streamLength-1; i >= 0; i--) {
+                    drawBlur();
+                    if(i != self.streamLength-1)
+                        ctx.fillStyle = "rgba(0, 255, 70, " + self.symbols[i].opacity + ")";
+                    else
+                        ctx.fillStyle = "rgb(170, 255, 120)";
+                    ctx.fillText(self.symbols[i].symbol, self.currX, self.currY + (textSize * i));
+                }
+            }
+            console.log(self.streamLength);
+            return self;
+        }
+
+        function drawBlur() {
+            var blur = 1;
+            var width = 1 + blur * 2;
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgb(0, 235, 80)';
+            ctx.shadowOffsetX = width;
+            ctx.shadowOffsetY = 0;
+            ctx.shadowBlur = blur;
+        }
+    </script>
+</body>
+
+</html>

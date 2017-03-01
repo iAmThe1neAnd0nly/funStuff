@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0px;
+            padding: 0;
+            overflow: hidden;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+        }
+        
+        #aesthetic {
+            background-image: url('https://pbs.twimg.com/media/CuhT9G8XgAEjXR0.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            width: 30%;
+            height: 80%;
+            animation-name: float;
+            animation-iteration-count: infinite;
+            animation-duration: 3s;
+            animation-direction: alternate;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(10px);
+            }
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        #scroll {
+            /*background-image: url('https://68.media.tumblr.com/1c735184bd5e5eb873e0b046d96b7711/tumblr_inline_o3ktgf0ExO1to9tvg_500.gif'); /*miami*/
+            background-image: url('https://media.giphy.com/media/oSYflamt3IEjm/giphy.gif');
+            /*grid*/
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position-y: -300px, 0px;
+            opacity: 0.4;
+            position: absolute;
+        }
+        
+        button {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body onresize="resize()" onmousemove="mousemove()">
+
+    <iframe id="ytplayer" style="z-index: 100; position: absolute; visibility: hidden; width: 500; height: 400" type="text/html"
+        src="https://www.youtube.com/embed/cU8HrO7XuiE?autoplay=1&origin=http://example.com&loop=1" frameborder="0"></iframe>
+
+    <div id="scroll"></div>
+
+    <button id="togglePlayerBtn" onclick="togglePlayer()">toggle player</button>
+
+    <div id="aesthetic"></div>
+    <canvas id="cnv"></canvas>
+
+    <script>
+        canvas = document.getElementById('cnv');
+        ctx = canvas.getContext('2d');
+
+        width = cnv.width = window.innerWidth;
+        height = cnv.height = window.innerHeight;
+
+        canvas.style.backgroundColor = "black";
+        symbols = [];
+
+        var cursorMove = false;
+
+        var frameCount;
+
+        start();
+        setInterval(update, 40);
+
+        var player = document.getElementById('ytplayer');
+        var btn = document.getElementById('togglePlayerBtn');
+
+        function resize() {
+            width = cnv.width = window.innerWidth;
+            height = cnv.height = window.innerHeight;
+        }
+
+        function start() {
+            frameCount = 0;
+            canvas.style.backgroundColor = "#ffb3ff";
+
+
+            for (var x = 0; x < width / 20; x++) {
+                for (var y = 0; y < height / 20; y++) {
+                    symbol = Symbol(
+                        String.fromCharCode(0x30A0 + Math.round(Math.random() * 96)),
+                        Math.round((Math.random() * 20) + 20),
+                        x * 26,
+                        y * 26
+                    );
+                    symbols.push(symbol);
+
+                }
+            }
+        }
+
+        function update() {
+
+            if (cursorMove) {
+                document.body.style.cursor = "default";
+            } else {
+                document.body.style.cursor = "none";
+            }
+
+            cursorMove = false;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.font = "20px Georgia";
+            ctx.fillStyle = "#3377ff"; //"rgb(0, 255, 70)";
+
+            for (var s = 0; s < symbols.length; s++) {
+                if (frameCount % symbols[s].lifetime == 0) {
+                    symbols[s].getNewChar();
+                    drawBlur();
+                }
+
+                ctx.fillText(symbols[s].char, symbols[s].x, symbols[s].y);
+            }
+
+            frameCount++;
+        }
+
+        function Symbol(char, lifetime, x, y) {
+            var self = {
+                char: char,
+                lifetime: lifetime,
+                x: x,
+                y: y
+            }
+
+            self.getNewChar = function () {
+                self.char = String.fromCharCode(0x30A0 + Math.round(Math.random() * 96))
+            }
+            return self;
+        }
+
+        function drawBlur() {
+            var blur = 0.6;
+            var width = 1 + blur * 2;
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgb(0, 235, 80)';
+            ctx.shadowOffsetX = width;
+            ctx.shadowOffsetY = 0;
+            ctx.shadowBlur = blur;
+        }
+
+        function mousemove() {
+            console.log('mouse');
+            cursorMove = true;
+        }
+
+        function togglePlayer() {
+
+
+
+            if (player.style.visibility == "hidden")
+                player.style.visibility = "visible";
+            else
+                player.style.visibility = "hidden";
+        }
+    </script>
+</body>
+
+</html>
