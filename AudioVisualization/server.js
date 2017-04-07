@@ -12,7 +12,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.listen(process.env.PORT || 8888);
 
-console.log('server running...');
+console.log('server running on port 8888...');
 
 app.get('/', function(req, res){
     
