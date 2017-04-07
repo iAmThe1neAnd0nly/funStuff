@@ -3,26 +3,73 @@
 <head>
     <title>Audio Visualization</title>
     <style>
-        body, html{
+        body,
+        html {
+            font-family: 'Arial';
             margin: 0;
             padding: 0;
             display: inline-block;
         }
-        canvas{
-            clear: both;
+        
+        #container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        audio {
+            width: 100%;
+        }
+        
+        #songPicker {
+            text-align: center;
+            margin-left: 20px;
+            overflow: scroll;
+            height: 300px;
+            width: 10%;
+        }
+        
+        #songList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #songList>li button{
+            background-color: white;
+            width: 100%;
+            height: 30%;
+            cursor: pointer;
         }
     </style>
-    
+
 </head>
 
 <body>
-    <canvas id="cnv"></canvas>
-    <audio id="myAudio" controls crossorigin="anonymous" src="/inTheAir.mp3"></audio>
-    <button onclick="songChange('inTheAir')">"In The Air Tonight"</button>
-    <button onclick = "songChange('falcoRockMe')">"Rock Me Amadeus"</button>
-    <button onclick = "songChange('mama')">"Mama"</button>
-    <button onclick="songChange('macintoshPlus420')">Macintosh Plus 420</button>
+
+    <div id="container">
+        <canvas id="cnv"></canvas>
+        <div id="songPicker">
+            <ul id="songList">
+                <li>
+                    <button onclick="songChange('inTheAir')">"In The Air Tonight"</button>
+                </li>
+                <li>
+                    <button onclick="songChange('falcoRockMe')">"Rock Me Amadeus"</button>
+                </li>
+                <li>
+                    <button onclick="songChange('mama')">"Mama"</button>
+                </li>
+                <li>
+                    <button onclick="songChange('macintoshPlus420')">Macintosh Plus 420</button>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
     <br>
+    <audio id="myAudio" autoplay="false" controls crossorigin="anonymous" src="/inTheAir.mp3"></audio>
     <button onclick="changeGraph('bar')">Bar Graph</button>
     <button onclick="changeGraph('osc')">Oscillator</button>
     <button onclick="changeGraph('rad')">Radial</button>
@@ -32,17 +79,18 @@
         var canvasCtx = cnv.getContext('2d');
 
         cnv.height = window.innerHeight - 100;
-        cnv.width = window.innerWidth;
+        cnv.width = window.innerWidth * .8;
 
         var audio = document.getElementById('myAudio');
         audio.volume = 0.1;
 
-        function songChange(newSong){
+        function songChange(newSong) {
             audio.src = '/' + newSong + '.mp3';
-            audio.play();
+            //audio.play();
         }
         var currGraph = 'rad';
-        function changeGraph(gr){
+
+        function changeGraph(gr) {
             currGraph = gr;
         }
     </script>

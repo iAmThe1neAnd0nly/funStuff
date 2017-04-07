@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title>Audio Visualization</title>
+    <style>
+        body, html{
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+        }
+        canvas{
+            clear: both;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <canvas id="cnv"></canvas>
+    <audio id="myAudio" controls crossorigin="anonymous" src="/inTheAir.mp3"></audio>
+    <button onclick="songChange('inTheAir')">"In The Air Tonight"</button>
+    <button onclick = "songChange('falcoRockMe')">"Rock Me Amadeus"</button>
+    <button onclick = "songChange('mama')">"Mama"</button>
+    <button onclick="songChange('macintoshPlus420')">Macintosh Plus 420</button>
+    <br>
+    <button onclick="changeGraph('bar')">Bar Graph</button>
+    <button onclick="changeGraph('osc')">Oscillator</button>
+    <button onclick="changeGraph('rad')">Radial</button>
+
+    <script>
+        var cnv = document.getElementById('cnv');
+        var canvasCtx = cnv.getContext('2d');
+
+        cnv.height = window.innerHeight - 100;
+        cnv.width = window.innerWidth;
+
+        var audio = document.getElementById('myAudio');
+        audio.volume = 0.1;
+
+        function songChange(newSong){
+            audio.src = '/' + newSong + '.mp3';
+            audio.play();
+        }
+        var currGraph = 'rad';
+        function changeGraph(gr){
+            currGraph = gr;
+        }
+    </script>
+    <script src="/script.js"></script>
+</body>
+
+</html>
